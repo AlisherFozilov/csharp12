@@ -8,6 +8,11 @@ namespace matrix
     {
         private static void Main()
         {
+            Multithreading.UsingThreads();
+            Multithreading.UsingTasks();
+            Multithreading.UsingParallel();
+            
+            return;
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.CursorVisible = false;
             var width = 100;
@@ -111,6 +116,45 @@ namespace matrix
             }
 
             Thread.Sleep(Speed);
+        }
+    }
+
+    static class Multithreading
+    {
+        // Многопоточное программирование
+        public static void UsingThreads()
+        {
+            var t = new Thread(() =>
+            {
+                Thread.Sleep(10);
+                Console.WriteLine("Hello threads");
+            });
+            t.Start();
+            Console.WriteLine("waiting for a thread to complete");
+            t.Join();
+            Console.WriteLine("finished");
+        }
+
+        // Асинхронное программирование
+        public static void UsingTasks()
+        {
+            var t = new Task(() =>
+            {
+                Thread.Sleep(10);
+                Console.WriteLine("Hello task");
+            });
+            t.Start();
+            Console.WriteLine("waiting for a task to complete");
+            t.Wait();
+            Console.WriteLine("finished");
+        }
+
+        // Параллельное программирование
+        public static void UsingParallel()
+        {
+            var sum = 0;
+            Parallel.For(1, 100, num => Interlocked.Add(ref sum, num));
+            Console.WriteLine(sum);
         }
     }
 }
