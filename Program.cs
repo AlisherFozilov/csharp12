@@ -10,13 +10,22 @@ namespace matrix
         {
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.CursorVisible = false;
-            var m = new Matrix(100, 100, 10, 25);
-
-            for (var i = 0; i < 1000; i++)
+            var width = 100;
+            var m = new Matrix(100, width, 20, 25);
+            var r = new Random();
+            for (var i = 0; i < 100; i++)
             {
-                Task.Factory.StartNew(m.SpawnFallingSymbols);
+                var startColumn = r.Next(0, width);
+                Task.Factory.StartNew(() => m.SpawnFallingSymbols(startColumn));
+                Task.Factory.StartNew(() => m.SpawnFallingSymbols(startColumn + 1));
+                Task.Factory.StartNew(() =>
+                {
+                    Thread.Sleep(3000);
+                    Task.Factory.StartNew(() => m.SpawnFallingSymbols(startColumn));
+                });
             }
 
+            // return;
             Thread.Sleep(1_000_000);
         }
     }
@@ -25,7 +34,7 @@ namespace matrix
     {
         private int Width { get; set; }
 
-        private int Speed { get; set; }
+        private int Speed { get; set; } // lower - faster
         private int Length { get; set; }
 
         private int Height { get; set; }
@@ -48,11 +57,10 @@ namespace matrix
             return $"{Letters[Rand.Next(0, 35)]}";
         }
 
-        public void SpawnFallingSymbols()
+        public void SpawnFallingSymbols(int startColumn)
         {
             var r = new Random();
             var length = r.Next(10, Length);
-            var startColumn = r.Next(0, Width);
 
             for (var startRow = 2; startRow < Height; startRow++)
             {
